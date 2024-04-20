@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hydrogel Drug Release Prediction</title>
+</head>
+<body>
+    <h1>Hydrogel Drug Release Prediction</h1>
+    <form id="prediction-form">
+        <label for="hydrogel-properties">Hydrogel Properties:</label><br>
+        <textarea id="hydrogel-properties" name="hydrogel-properties" rows="4" cols="50">{{ default_hydrogel_properties }}</textarea><br>
+        <label for="drug-release-profiles">Drug Release Profiles:</label><br>
+        <textarea id="drug-release-profiles" name="drug-release-profiles" rows="4" cols="50">{{ default_drug_release_profiles }}</textarea><br>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#prediction-form').submit(function(e) {
+                e.preventDefault();
+                var hydrogelProperties = JSON.parse($('#hydrogel-properties').val());
+                var drugReleaseProfiles = JSON.parse($('#drug-release-profiles').val());
+                
+                $.ajax({
+                    url: '/predict',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'hydrogel_properties': hydrogelProperties,
+                        'drug_release_profiles': drugReleaseProfiles
+                    }),
+                    success: function(response) {
+                        var predictedRelease = response.predicted_release;
+                        $('#result').text('Predicted Release: ' + predictedRelease);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
